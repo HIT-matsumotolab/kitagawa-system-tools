@@ -9,7 +9,7 @@ alphabet = 'a'
   alphabet = alphabet.next
 }
 
-client = Mysql2::Client.new(:host => 'localhost', :username => 'root', :password => 'root', :database => 'c_training4')
+client = Mysql2::Client.new(:host => 'localhost', :username => '', :password => '', :database => '')
 client.query("SELECT * FROM progress INNER JOIN users ON progress.user_id = users.id WHERE test_id = #{test_id} ORDER BY test_id ASC, user_id ASC").each do |result| # 1人(1テスト)分の解答履歴
   p result['name']
   used_text = Array.new
