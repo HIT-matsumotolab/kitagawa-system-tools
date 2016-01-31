@@ -30,11 +30,10 @@ client.query("SELECT * FROM progress INNER JOIN users ON progress.user_id = user
   end
 
   begin
-    user_answer.length.times {|i|
-      client.query("SELECT * FROM answers WHERE user_id = #{result['user_id']} AND question_id = #{question_ids[i]} AND test_flag = 1").each do |question|
-        p question['id']
-      end
-      p user_answer[i] == collect_answer[i]
+    user_answer.length.times {|i| # ユーザが答えたところまでアップデート
+      tmp_check = user_answer[i] == collect_answer[i] ? 1 : 0
+      client.query("UPDATE answers SET `select`=#{collect_answer[i]},`check`=#{tmp_check} WHERE user_id = #{result['user_id']} AND question_id = #{question_ids[i]} AND test_flag = 1")
+        puts "question_id:#{question_ids[i]} was updated."
     }
   rescue => ex
     puts ex.message
