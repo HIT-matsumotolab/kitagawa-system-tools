@@ -10,7 +10,7 @@ alphabet = 'a'
 
 ARGV.each do |test_id|
   test_id = test_id.to_i
-  client = Mysql2::Client.new(:host => 'localhost', :username => 'root', :password => 'root', :database => 'kitagawa4')
+  client = Mysql2::Client.new(:host => 'localhost', :username => 'root', :password => 'root', :database => 'c_training4')
   client.query("SELECT * FROM progress INNER JOIN users ON progress.user_id = users.id WHERE test_id = #{test_id} ORDER BY test_id ASC, user_id ASC").each do |result| # 1人(1テスト)分の解答履歴
     p result['name']
     used_text = Array.new
@@ -38,7 +38,7 @@ ARGV.each do |test_id|
         user_answer[i] = -9999 if user_answer[i] == 'null'
         collect_answer[i] = -9999 if collect_answer[i] == 'null'
 
-        client.query("UPDATE answers SET `select`=#{collect_answer[i]},`check`=#{tmp_check} WHERE user_id = #{result['user_id']} AND question_id = #{question_ids[i]} AND test_flag = 1")
+        client.query("UPDATE answers SET `select`=#{collect_answer[i]} WHERE user_id = #{result['user_id']} AND question_id = #{question_ids[i]} AND test_flag = 1")
           puts "question_id:#{question_ids[i]} was updated."
       }
     rescue => ex
