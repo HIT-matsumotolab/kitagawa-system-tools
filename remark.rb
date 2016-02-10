@@ -38,7 +38,7 @@ ARGV.each do |test_id|
         user_answer[i] = -9999 if user_answer[i] == 'null'
         collect_answer[i] = -9999 if collect_answer[i] == 'null'
 
-        client.query("UPDATE answers SET `select`=#{collect_answer[i]} WHERE user_id = #{result['user_id']} AND question_id = #{question_ids[i]} AND test_flag = 1")
+        client.query("UPDATE answers SET `answer`=#{collect_answer[i]} WHERE user_id = #{result['user_id']} AND question_id = #{question_ids[i]} AND test_flag = 1")
           puts "question_id:#{question_ids[i]} was updated."
       }
     rescue => ex
