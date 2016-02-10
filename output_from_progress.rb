@@ -12,7 +12,6 @@ class OutputFromProgress
     }
     @output_hash = Hash.new
     get_users
-    p @output_hash
   end
 
   def get_users
@@ -68,10 +67,8 @@ class OutputFromProgress
       id_collect_hash = id_collect_hash.sort
       id_user_answer_hash = id_user_answer_hash.sort
 
-      tmp_ary = Array.new
-      tmp_ary.push(list['name'])
       id_collect_hash.each do |op|
-        tmp_ary.push(op[1])
+        @output_hash[list['name']] += op[1].to_s + ','
       end
 
       tmp_user_answer_ary = Array.new
@@ -79,21 +76,23 @@ class OutputFromProgress
       id_user_answer_hash.each do |op|
         tmp_user_answer_ary.push(op[1])
       end
-      output_array.push(tmp_ary)
       user_answer_array.push(tmp_user_answer_ary)
     end
+
+    p @output_hash.to_a
 
     CSV.open("./tmp/#{date}_collect_flags.csv", "w") do |csv|
       sorted_question_ids.unshift('')
       csv << sorted_question_ids
-      output_array.each do |arr|
-        p arr.collect{|a|
-          if a.nil?
-            a = -1
+      @output_hash.to_a.each do |arr|
+        arr[1] = arr[1].split(',').map{|a|
+          if a == ''
+            -1
           else
-            a
+            a.to_i
           end
         }
+        p arr.flatten!
         csv << arr
       end
     end
