@@ -11,6 +11,7 @@ class OutputFromProgress
       alphabet = alphabet.next
     }
     @output_hash = Hash.new
+    @output_question_ids = Array.new
     get_users
   end
 
@@ -79,23 +80,8 @@ class OutputFromProgress
       user_answer_array.push(tmp_user_answer_ary)
     end
 
-    p @output_hash.to_a
 
-    CSV.open("./tmp/#{date}_collect_flags.csv", "w") do |csv|
-      sorted_question_ids.unshift('')
-      csv << sorted_question_ids
-      @output_hash.to_a.each do |arr|
-        arr[1] = arr[1].split(',').map{|a|
-          if a == ''
-            -1
-          else
-            a.to_i
-          end
-        }
-        p arr.flatten!
-        csv << arr
-      end
-    end
+
     CSV.open("./tmp/#{date}_user_answers.csv", "w") do |csv|
       csv << sorted_question_ids
       user_answer_array.each do |arr|
@@ -132,6 +118,24 @@ class OutputFromProgress
       }
       csv << tmp_array
       output.each do |arr|
+        csv << arr
+      end
+    end
+  end
+
+  def output_collect_flags
+    CSV.open("./tmp/collect_flags.csv", "w") do |csv|
+      @output_question_ids.unshift('')
+      csv << @output_question_ids
+      @output_hash.to_a.each do |arr|
+        arr[1] = arr[1].split(',').map{|a|
+          if a == ''
+            -1
+          else
+            a.to_i
+          end
+        }
+        p arr.flatten!
         csv << arr
       end
     end
