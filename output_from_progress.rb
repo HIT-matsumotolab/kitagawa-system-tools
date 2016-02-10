@@ -10,6 +10,15 @@ class OutputFromProgress
       @alphabet_to_int_hash[alphabet] = i
       alphabet = alphabet.next
     }
+    @output_hash = Hash.new
+    get_users
+    p @output_hash
+  end
+
+  def get_users
+    @client.query("SELECT name FROM users WHERE `name` LIKE 'b21%'").each do |user|
+      @output_hash[user['name']] = ''
+    end
   end
 
   def export_collect_flags(test_id, date)
