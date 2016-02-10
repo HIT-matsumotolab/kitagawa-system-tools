@@ -62,7 +62,11 @@ class OutputFromProgress
       id_collect_hash = Hash.new
       id_user_answer_hash = Hash.new
       questions_list.each { |ql|
-        id_collect_hash[ql] = collect_flags.shift
+        if collect_flags.nil?
+          id_collect_hash[ql] = -1
+        else
+          id_collect_hash[ql] = collect_flags.shift
+        end
         id_user_answer_hash[ql] = list_answer_array.shift
       }
       id_collect_hash = id_collect_hash.sort
@@ -80,7 +84,7 @@ class OutputFromProgress
       user_answer_array.push(tmp_user_answer_ary)
     end
 
-
+    @output_question_ids.push(sorted_question_ids)
 
     CSV.open("./tmp/#{date}_user_answers.csv", "w") do |csv|
       csv << sorted_question_ids
@@ -125,6 +129,7 @@ class OutputFromProgress
 
   def output_collect_flags
     CSV.open("./tmp/collect_flags.csv", "w") do |csv|
+      @output_question_ids.flatten!
       @output_question_ids.unshift('')
       csv << @output_question_ids
       @output_hash.to_a.each do |arr|
@@ -150,33 +155,34 @@ tr = OutputFromProgress.new
 a = Hash.new
 
 a['11'] = 20150930
-# a['12'] = 20151002
-# a['13'] = 20151007
-# a['14'] = 20151009
-# a['15'] = 20151014
-# a['16'] = 20151016
-# a['17'] = 20151021
-# a['18'] = 20151023
-# a['19'] = 20151028
-# a['20'] = 20151030
-# a['21'] = 20151104
-# a['22'] = 20151111
-# a['23'] = 20151113
-# a['24'] = 20151125
-# a['25'] = 20151127
-# a['26'] = 20151202
-# a['27'] = 20151204
-# a['28'] = 20151209
-# a['29'] = 20151211
-# a['30'] = 20151216
-# a['31'] = 20151216
-# a['32'] = 20151218
-# a['33'] = 20150106
-# a['34'] = 20150108
-# a['35'] = 20150113
-# a['36'] = 20150115
+a['12'] = 20151002
+a['13'] = 20151007
+a['14'] = 20151009
+a['15'] = 20151014
+a['16'] = 20151016
+a['17'] = 20151021
+a['18'] = 20151023
+a['19'] = 20151028
+a['20'] = 20151030
+a['21'] = 20151104
+a['22'] = 20151111
+a['23'] = 20151113
+a['24'] = 20151125
+a['25'] = 20151127
+a['26'] = 20151202
+a['27'] = 20151204
+a['28'] = 20151209
+a['29'] = 20151211
+a['30'] = 20151216
+a['31'] = 20151216
+a['32'] = 20151218
+a['33'] = 20150106
+a['34'] = 20150108
+a['35'] = 20150113
+a['36'] = 20150115
 a.each do |key, val|
   tr.export_collect_flags(key, val)
   tr.export_question_answers(key, val)
 end
+tr.output_collect_flags
 # tr.export_user_answers(18, 20151023)
