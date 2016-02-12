@@ -27,11 +27,13 @@ class OutputFromProgress
     user_answer_array = Array.new
     sorted_question_ids = Array.new
     answered_user = Array.new
+    @client.query("SELECT * FROM contents WHERE test_id = #{test_id} ORDER BY question_id ASC").each do |content| # idから問題を抽出
+      sorted_question_ids.push(content['question_id'])
+    end
     @client.query("SELECT * FROM progress INNER JOIN users ON progress.user_id = users.id WHERE test_id = #{test_id} ORDER BY test_id ASC, user_id ASC").each do |list|
       puts "user_name:" + list['name'].to_s + ", user_id:" + list['user_id'].to_s
       answered_user.push(list['name'])
       questions_list = list['list'].split(',')
-      sorted_question_ids = questions_list.sort
       list_selector_array = list['list_selecter'].split(',')
       list_answer_array = list['list_answer'].split(',')
       texts_array = list['texts'].split(',')
@@ -41,7 +43,7 @@ class OutputFromProgress
         @client.query("SELECT * FROM questions WHERE id = #{questions_list[i].to_i}").each do |question| # idから問題を抽出
           begin
             tmp_answer_index = @alphabet_to_int_hash[texts_array[i]]
-            list_selector_array[i] = question['answer'].split(',')[tmp_answer_index] # 使われた変数の本当の答え
+            list_answer_array[i] = question['answer'].split(',')[tmp_answer_index] # 使われた変数の本当の答え
           rescue => ex
             puts ex.message
             p i
@@ -72,10 +74,13 @@ class OutputFromProgress
       }
       id_collect_hash = id_collect_hash.sort
       id_user_answer_hash = id_user_answer_hash.sort
-
-      id_collect_hash.each do |op|
-        @output_hash[list['name']] += op[1].to_s + ','
-      end
+      sorted_question_ids.length.times {|i|
+        if id_collect_hash[i][1].nil?
+          @output_hash[list['name']] += '-1,'
+        else
+          @output_hash[list['name']] += id_collect_hash[i][1].to_s + ','
+        end
+      }
 
       tmp_user_answer_ary = Array.new
       tmp_user_answer_ary.push(list['name'])
@@ -142,7 +147,7 @@ class OutputFromProgress
             a.to_i
           end
         }
-        # p arr.flatten!
+        arr.flatten!
         csv << arr
       end
     end
@@ -171,28 +176,28 @@ a['11'] = 20150930
 a['12'] = 20151002
 a['13'] = 20151007
 a['14'] = 20151009
-# a['15'] = 20151014
-# a['16'] = 20151016
-# a['17'] = 20151021
-# a['18'] = 20151023
-# a['19'] = 20151028
-# a['20'] = 20151030
-# a['21'] = 20151104
-# a['22'] = 20151111
-# a['23'] = 20151113
-# a['24'] = 20151125
-# a['25'] = 20151127
-# a['26'] = 20151202
-# a['27'] = 20151204
-# a['28'] = 20151209
-# a['29'] = 20151211
-# a['30'] = 20151216
-# a['31'] = 20151216
-# a['32'] = 20151218
-# a['33'] = 20150106
-# a['34'] = 20150108
-# a['35'] = 20150113
-# a['36'] = 20150115
+a['15'] = 20151014
+a['16'] = 20151016
+a['17'] = 20151021
+a['18'] = 20151023
+a['19'] = 20151028
+a['20'] = 20151030
+a['21'] = 20151104
+a['22'] = 20151111
+a['23'] = 20151113
+a['24'] = 20151125
+a['25'] = 20151127
+a['26'] = 20151202
+a['27'] = 20151204
+a['28'] = 20151209
+a['29'] = 20151211
+a['30'] = 20151216
+a['31'] = 20151216
+a['32'] = 20151218
+a['33'] = 20150106
+a['34'] = 20150108
+a['35'] = 20150113
+a['36'] = 20150115
 a.each do |key, val|
   tr.export_collect_flags(key, val)
   tr.export_question_answers(key, val)
