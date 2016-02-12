@@ -1,9 +1,11 @@
 require 'mysql2'
 require "csv"
+require 'yaml'
 class OutputFromProgress
 
   def initialize()
-    @client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "root", :database => "c_training5")
+    db_config = YAML.load_file('./database.yml')
+    @client = Mysql2::Client.new(:host => db_config['host'], :username => db_config['name'], :password => db_config['pass'], :database => db_config['database'])
     @alphabet_to_int_hash = Hash.new # アルファベットと0~25まで対応付けしたハッシュ
     alphabet = 'a'
     26.times {|i|
@@ -173,31 +175,31 @@ tr = OutputFromProgress.new
 a = Hash.new
 
 a['11'] = 20150930
-a['12'] = 20151002
-a['13'] = 20151007
-a['14'] = 20151009
-a['15'] = 20151014
-a['16'] = 20151016
-a['17'] = 20151021
-a['18'] = 20151023
-a['19'] = 20151028
-a['20'] = 20151030
-a['21'] = 20151104
-a['22'] = 20151111
-a['23'] = 20151113
-a['24'] = 20151125
-a['25'] = 20151127
-a['26'] = 20151202
-a['27'] = 20151204
-a['28'] = 20151209
-a['29'] = 20151211
-a['30'] = 20151216
-a['31'] = 20151216
-a['32'] = 20151218
-a['33'] = 20150106
-a['34'] = 20150108
-a['35'] = 20150113
-a['36'] = 20150115
+# a['12'] = 20151002
+# a['13'] = 20151007
+# a['14'] = 20151009
+# a['15'] = 20151014
+# a['16'] = 20151016
+# a['17'] = 20151021
+# a['18'] = 20151023
+# a['19'] = 20151028
+# a['20'] = 20151030
+# a['21'] = 20151104
+# a['22'] = 20151111
+# a['23'] = 20151113
+# a['24'] = 20151125
+# a['25'] = 20151127
+# a['26'] = 20151202
+# a['27'] = 20151204
+# a['28'] = 20151209
+# a['29'] = 20151211
+# a['30'] = 20151216
+# a['31'] = 20151216
+# a['32'] = 20151218
+# a['33'] = 20150106
+# a['34'] = 20150108
+# a['35'] = 20150113
+# a['36'] = 20150115
 a.each do |key, val|
   tr.export_collect_flags(key, val)
   tr.export_question_answers(key, val)

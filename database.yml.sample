@@ -1,3 +1,4 @@
+host: localhost
 user: user_name
 pass: password
 database: database_name
